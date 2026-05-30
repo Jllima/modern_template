@@ -1,0 +1,236 @@
+<div class="space-y-8">
+  <!-- SEO Title and Intro -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight" id="dashboard-heading">
+        Overview Dashboard
+      </h1>
+      <p class="text-sm text-slate-400 mt-1">
+        Welcome back, John! Here is what is happening with your template today.
+      </p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center space-x-3">
+      <button 
+        type="button" 
+        data-action="click->ui#openModal"
+        class="px-4 py-2.5 text-sm font-semibold rounded-lg bg-chakra-brand-500 hover:bg-chakra-brand-600 text-white shadow-sm transition-all duration-150 flex items-center"
+      >
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        New Operation
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <% @stats.each_with_index do |stat, index| %>
+      <div class="bg-white p-6 border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-slate-400"><%= stat[:label] %></span>
+          <span class="px-2 py-0.5 text-xs font-semibold rounded-full <%= stat[:bg] %>">
+            <%= stat[:change] %>
+          </span>
+        </div>
+        <div class="mt-4 flex items-baseline">
+          <span class="text-3xl font-bold text-slate-800 tracking-tight"><%= stat[:value] %></span>
+        </div>
+        <div class="mt-2 text-xs text-slate-400 flex items-center">
+          <% if stat[:trend] == "up" %>
+            <svg class="w-3.5 h-3.5 text-emerald-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+          <% else %>
+            <svg class="w-3.5 h-3.5 text-amber-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path>
+            </svg>
+          <% end %>
+          vs. previous month
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Split Sections -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- User Management Table (Span 2) -->
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden lg:col-span-2">
+      <div class="p-6 border-b border-slate-50 flex items-center justify-between">
+        <h2 class="text-lg font-bold text-slate-800 tracking-tight">Recent Users</h2>
+        <a href="#" class="text-xs font-semibold text-chakra-brand-500 hover:text-chakra-brand-600">View All</a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <th class="py-3 px-6">User</th>
+              <th class="py-3 px-6">Role</th>
+              <th class="py-3 px-6">Status</th>
+              <th class="py-3 px-6 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-50 text-sm text-slate-600">
+            <% @users.each do |user| %>
+              <tr class="hover:bg-slate-50/50 transition-colors">
+                <td class="py-4 px-6 flex items-center space-x-3">
+                  <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center font-semibold text-slate-700">
+                    <%= user[:name].split.map(&:first).join %>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-slate-800"><%= user[:name] %></div>
+                    <div class="text-xs text-slate-400"><%= user[:email] %></div>
+                  </div>
+                </td>
+                <td class="py-4 px-6"><%= user[:role] %></td>
+                <td class="py-4 px-6">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium <%= user[:badge] %>">
+                    <%= user[:status] %>
+                  </span>
+                </td>
+                <td class="py-4 px-6 text-right">
+                  <button class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <svg class="w-5 h-5 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Interactive Component Column -->
+    <div class="space-y-6">
+      <!-- Stimulus Counter Card -->
+      <div 
+        data-controller="counter" 
+        class="bg-white p-6 border border-slate-100 rounded-2xl shadow-sm flex flex-col justify-between"
+      >
+        <div>
+          <span class="text-xs font-semibold text-chakra-brand-500 uppercase tracking-widest">Interactive Component</span>
+          <h2 class="text-lg font-bold text-slate-800 tracking-tight mt-1">Stimulus State</h2>
+          <p class="text-xs text-slate-400 mt-2">
+            This card demonstrates interactive client-side logic compiled through esbuild.
+          </p>
+        </div>
+
+        <div class="my-6 bg-slate-50 rounded-xl p-4 flex items-center justify-between border border-slate-100">
+          <span class="text-sm font-semibold text-slate-600">Current Value:</span>
+          <span 
+            data-counter-target="count" 
+            class="text-3xl font-extrabold text-slate-800 font-mono"
+            id="counter-val"
+          >
+            0
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button 
+            type="button" 
+            data-action="click->counter#decrement"
+            class="py-2 text-sm font-semibold rounded-lg border border-slate-100 hover:bg-slate-50 text-slate-700 transition-colors"
+          >
+            Decrement
+          </button>
+          <button 
+            type="button" 
+            data-action="click->counter#increment"
+            class="py-2 text-sm font-semibold rounded-lg bg-chakra-brand-50 text-chakra-brand-700 hover:bg-chakra-brand-100 transition-colors"
+          >
+            Increment
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Card -->
+      <div class="bg-gradient-to-br from-chakra-brand-500 to-chakra-brand-600 p-6 rounded-2xl text-white shadow-sm flex flex-col justify-between relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-40 h-40 rounded-full bg-white/10"></div>
+        <div>
+          <h2 class="text-lg font-bold tracking-tight">Need Support?</h2>
+          <p class="text-xs text-white/80 mt-2 leading-relaxed">
+            Access our documentation or open a ticket. Our support team responds within 2 hours.
+          </p>
+        </div>
+        <div class="mt-6">
+          <button 
+            type="button"
+            data-action="click->ui#openModal"
+            class="w-full bg-white text-chakra-brand-600 font-semibold py-2.5 rounded-lg text-sm shadow-sm hover:bg-slate-50 transition-colors"
+          >
+            Contact Support
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Container (Overlay and Dialog) -->
+<div 
+  data-ui-target="modal" 
+  class="fixed inset-0 z-50 items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm hidden"
+  id="support-modal"
+>
+  <div class="bg-white rounded-2xl max-w-md w-full shadow-lg border border-slate-100 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <!-- Header -->
+    <div class="p-6 border-b border-slate-50 flex items-center justify-between">
+      <h3 class="text-lg font-bold text-slate-800 tracking-tight">New Support Ticket</h3>
+      <button 
+        type="button" 
+        data-action="click->ui#closeModal"
+        class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-50 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body / Form -->
+    <form class="p-6 space-y-4">
+      <div>
+        <label for="ticket-subject" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Subject</label>
+        <input 
+          type="text" 
+          id="ticket-subject"
+          placeholder="e.g. Issue compiling assets" 
+          class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-chakra-brand-500 focus:bg-white transition-all duration-150"
+        >
+      </div>
+
+      <div>
+        <label for="ticket-message" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Message Description</label>
+        <textarea 
+          id="ticket-message"
+          rows="3" 
+          placeholder="Describe your issue in detail..." 
+          class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-chakra-brand-500 focus:bg-white transition-all duration-150"
+        ></textarea>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="p-6 bg-slate-50 border-t border-slate-100 flex items-center justify-end space-x-3">
+      <button 
+        type="button" 
+        data-action="click->ui#closeModal"
+        class="px-4 py-2 text-sm font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
+      >
+        Cancel
+      </button>
+      <button 
+        type="button" 
+        data-action="click->ui#closeModal"
+        class="px-4 py-2 text-sm font-semibold rounded-lg bg-chakra-brand-500 hover:bg-chakra-brand-600 text-white transition-colors"
+      >
+        Submit Ticket
+      </button>
+    </div>
+  </div>
+</div>
