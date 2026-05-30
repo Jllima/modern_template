@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+# Aborta o script imediatamente se qualquer comando falhar (o que é ideal para o CI)
+set -e
+
+# ==========================================
+# Variáveis e Configurações
+# ==========================================
+DOCS_DIR="docs"
+BRAKEMAN_MD_OUT="$DOCS_DIR/brakeman/seguranca.md"
+BRAKEMAN_HTML_OUT="$DOCS_DIR/brakeman/seguranca.html"
+RUBYCRITIC_OUT="$DOCS_DIR/rubycritic"
+RESUMO_OUT="$DOCS_DIR/resumo_sprint.md"
+
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}🚀 Iniciando Pipeline de Quality Assurance Supremo (QA)...${NC}\n"
+
+# ==========================================
+# 1. Preparação
+# ==========================================
+mkdir -p "$DOCS_DIR/brakeman" "$DOCS_DIR/coverage" "$DOCS_DIR/rubycritic"
+
+# ==========================================
+# 2. Execução das Ferramentas
+# ==========================================
+echo "🎨 [1/4] Verificando Padrão de Estilo do Código (RuboCop)..."
+bundle exec rubocop
+
+echo -e "\n🔒 [2/4] Iniciando análise de Segurança (Brakeman)..."
+bundle exec brakeman -q -w2 -o "$BRAKEMAN_MD_OUT" -o "$BRAKEMAN_HTML_OUT"
+
+echo -e "\n🧪 [3/4] Rodando Minitest e Verificando Cobertura Mínima (80%)..."
+bin/rails test
+
+echo -e "\n📊 [4/4] Analisando Qualidade do Código e Dívida Técnica (RubyCritic)..."
+bundle exec rubycritic app lib --no-browser --path "$RUBYCRITIC_OUT"
+
+# ==========================================
+# 3. Geração do Resumo
+# ==========================================
+echo -e "\n📝 Gerando relatório de resumo da Sprint..."
+
+cat <<EOF > "$RESUMO_OUT"
+# Relatório de Aceite de Código - Fim de Sprint
+Gerado em: $(date)
+
+## 🎨 Padronização (RuboCop)
+- Status: **Aprovado** (Nenhum desvio de padrão de código foi encontrado).
+
+## 🔒 Segurança (Brakeman)
+- Status: **Verificado**
+- Detalhes interativos salvos em: \`docs/brakeman/seguranca.html\`
+- Relatório em texto: \`docs/brakeman/seguranca.md\`
+
+## 🧪 Cobertura de Testes (SimpleCov)
+- Status: **Aprovado** (O código novo manteve a cobertura geral acima da meta de 80%).
+- Relatório detalhado: \`docs/coverage/index.html\`
+
+## 📊 Qualidade Arquitetural (RubyCritic)
+- Status: **Analisado**
+- Gráfico de Churn vs Complexidade disponível em: \`docs/rubycritic/overview.html\`
+EOF
+
+# ==========================================
+# 4. Finalização e Abertura no Navegador
+# ==========================================
+echo -e "\n${GREEN}✅ EXCELENTE! O código atende a 100% dos critérios de qualidade exigidos.${NC}"
+
+if command -v wslview &> /dev/null; then
+  echo -e "🌐 Abrindo painéis de controle no seu navegador..."
+  wslview "$DOCS_DIR/coverage/index.html"
+  wslview "$RUBYCRITIC_OUT/overview.html"
+  wslview "$BRAKEMAN_HTML_OUT"
+fi

@@ -38,3 +38,11 @@
 !/app/assets/builds/.keep
 
 /node_modules
+
+# Ignora relatórios HTML
+/docs/coverage/
+/docs/rubycritic/
+/docs/brakeman/*.html
+
+# Permite versionar o relatório Markdown de segurança
+!/docs/brakeman/seguranca.md
