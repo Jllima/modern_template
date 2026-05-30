@@ -1,10 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "sidebar", "dropdown", "modal" ]
+  // 1. Adicionamos sidebarOverlay e main na lista
+  static targets = ["sidebar", "sidebarOverlay", "dropdown", "modal", "main"]
 
   connect() {
-    // Add event listener to close dropdown if clicking outside
     this.clickOutsideHandler = (event) => {
       if (this.hasDropdownTarget && !this.dropdownTarget.contains(event.target) && !event.target.closest('[data-action*="toggleDropdown"]')) {
         this.dropdownTarget.classList.add("hidden")
@@ -17,9 +17,27 @@ export default class extends Controller {
     document.removeEventListener("click", this.clickOutsideHandler)
   }
 
-  toggleSidebar() {
-    if (this.hasSidebarTarget) {
-      this.sidebarTarget.classList.toggle("-translate-x-full")
+  toggleSidebar(event) {
+    if (event) event.preventDefault()
+
+    const isDesktop = window.innerWidth >= 1024;
+
+    if (isDesktop) {
+      // 💻 WEB: Remove a classe que trava a sidebar na tela e a classe que empurra o conteúdo
+      if (this.hasSidebarTarget) {
+        this.sidebarTarget.classList.toggle("lg:translate-x-0")
+      }
+      if (this.hasMainTarget) {
+        this.mainTarget.classList.toggle("lg:pl-64")
+      }
+    } else {
+      // 📱 MOBILE: Alterna a entrada da sidebar e liga/desliga o fundo escuro
+      if (this.hasSidebarTarget) {
+        this.sidebarTarget.classList.toggle("-translate-x-full")
+      }
+      if (this.hasSidebarOverlayTarget) {
+        this.sidebarOverlayTarget.classList.toggle("hidden")
+      }
     }
   }
 
