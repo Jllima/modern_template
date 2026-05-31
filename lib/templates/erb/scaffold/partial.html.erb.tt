@@ -1,0 +1,11 @@
+<tr id="<%%= dom_id(<%= singular_name %>) %>" class="hover:bg-slate-50/50 transition-colors">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+  <td class="py-4 px-6"><%%= <%= singular_name %>.<%= attribute.name %> %></td>
+<% end -%>
+  
+  <td class="py-4 px-6 text-right space-x-3">
+    <%%= link_to "Ver", <%= singular_name %>, data: { turbo_frame: "modal" }, class: "text-slate-400 hover:text-slate-600 transition-colors font-medium text-sm" %>
+    
+    <%%= link_to "Editar", edit_<%= singular_route_name %>_path(<%= singular_name %>), data: { turbo_frame: "modal" }, class: "text-chakra-brand-500 hover:text-chakra-brand-600 transition-colors font-medium text-sm" %>
+  </td>
+</tr>

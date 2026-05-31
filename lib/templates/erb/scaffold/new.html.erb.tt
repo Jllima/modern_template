@@ -1,17 +1,37 @@
 <%% content_for :title, "New <%= human_name %>" %>
 
 <%%= turbo_frame_tag "modal" do %>
-  <div class="<%%= turbo_frame_request? ? 'p-6' : 'max-w-2xl mx-auto space-y-6' %>">
+  <%% if turbo_frame_request? %>
     
-    <%% unless turbo_frame_request? %>
-      <div>
-        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">New <%= human_name %></h1>
-        <p class="text-sm text-slate-400 mt-1">Fill in the details below to create a new record.</p>
-      </div>
-    <%% end %>
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+      <div class="bg-white rounded-2xl max-w-md w-full shadow-lg border border-slate-100 flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        
+        <div class="p-6 border-b border-slate-50 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-slate-800 tracking-tight">New <%= human_name %></h3>
+          
+          <%%= link_to <%= index_helper %>_path, class: "text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-50 transition-colors" do %>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          <%% end %>
+        </div>
 
-    <div class="<%%= turbo_frame_request? ? '' : 'bg-white border border-slate-100 rounded-2xl shadow-sm p-6' %>">
-      <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+        <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+      </div>
     </div>
-  </div>
+
+  <%% else %>
+
+    <div class="max-w-2xl mx-auto space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-4">
+        <h1 class="text-2xl font-bold text-slate-800 tracking-tight">New <%= human_name %></h1>
+        <%%= link_to "Voltar para Lista", <%= index_helper %>_path, class: "px-4 py-2 text-sm font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors" %>
+      </div>
+      
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+        <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+      </div>
+    </div>
+
+  <%% end %>
 <%% end %>
