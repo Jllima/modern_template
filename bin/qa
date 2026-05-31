@@ -32,10 +32,11 @@ bundle exec rubocop
 echo -e "\n🔒 [2/4] Iniciando análise de Segurança (Brakeman)..."
 bundle exec brakeman -q -w2 -o "$BRAKEMAN_MD_OUT" -o "$BRAKEMAN_HTML_OUT"
 
-echo -e "\n🧪 [3/4] Rodando Minitest e Verificando Cobertura Mínima (80%)..."
-bin/rails test
+echo -e "\n🧪 [3/4] Rodando RSpec e Verificando Cobertura Mínima (80%)..."
+# AQUI ESTÁ A MUDANÇA:
+bundle exec rspec
 
-echo -e "\n📊 [4/4] Analisando Qualidade do Código e Dívida Técnica (RubyCritic)..."
+echo -e "\n📊 [4/4] Analisando Qualidade do Código (RubyCritic)..."
 bundle exec rubycritic app lib --no-browser --path "$RUBYCRITIC_OUT"
 
 # ==========================================

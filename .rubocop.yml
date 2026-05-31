@@ -1,11 +1,12 @@
-# Omakase Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
+require:
+  - rubocop-rspec
+
 AllCops:
   Exclude:
     - 'config/**/*'
-    - 'test/**/*'
+    - 'spec/**/*'
     - 'db/migrate/**/*'
     - 'db/schema.rb'
     - 'bin/**/*'

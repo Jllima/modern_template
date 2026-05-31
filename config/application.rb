@@ -23,5 +23,17 @@ module ModernTemplate
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    # # Configuração dos Geradores
+    config.generators do |g|
+      g.test_framework :rspec,
+        fixtures: false,
+        view_specs: false,      # Não testamos views isoladas (usamos System Specs)
+        helper_specs: false,    # Helpers raramente precisam de testes isolados
+        routing_specs: false,   # Rotas são testadas nos Request Specs
+        controller_specs: false,# Controller specs são obsoletos (usamos Request Specs)
+        request_specs: true
+    end
+
+    g.fixture_replacement :factory_bot, dir: "spec/factories"
   end
 end
