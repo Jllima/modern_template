@@ -1,0 +1,57 @@
+<%% content_for :title, "<%= human_name.pluralize %>" %>
+
+<div class="space-y-8">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight" id="dashboard-heading">
+        <%= human_name.pluralize %>
+      </h1>
+      <p class="text-sm text-slate-400 mt-1">
+        Manage your <%= human_name.downcase.pluralize %> here.
+      </p>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <%%= link_to new_<%= singular_route_name %>_path, class: "px-4 py-2 text-sm font-semibold rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors flex items-center" do %>
+        Página Inteira
+      <%% end %>
+
+      <%%= link_to new_<%= singular_route_name %>_path, data: { turbo_frame: "modal" }, class: "px-4 py-2.5 text-sm font-semibold rounded-lg bg-chakra-brand-500 hover:bg-chakra-brand-600 text-white shadow-sm transition-all duration-150 flex items-center" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Novo Modal
+      <%% end %>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+            <th class="py-3 px-6"><%= attribute.human_name %></th>
+<% end -%>
+            <th class="py-3 px-6 text-right">Ações</th>
+          </tr>
+        </thead>
+        
+        <tbody class="divide-y divide-slate-50 text-sm text-slate-600" id="<%= plural_table_name %>">
+          <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+            <tr class="hover:bg-slate-50/50 transition-colors">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+              <td class="py-4 px-6"><%%= <%= singular_table_name %>.<%= attribute.name %> %></td>
+<% end -%>
+              
+              <td class="py-4 px-6 text-right space-x-3">
+                <%%= link_to "Ver", <%= singular_table_name %>, class: "font-medium text-slate-400 hover:text-slate-600 transition-colors" %>
+                <%%= link_to "Editar", edit_<%= singular_route_name %>_path(<%= singular_table_name %>), data: { turbo_frame: "modal" }, class: "font-medium text-chakra-brand-500 hover:text-chakra-brand-600 transition-colors" %>
+              </td>
+            </tr>
+          <%% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

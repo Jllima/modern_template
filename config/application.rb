@@ -33,7 +33,12 @@ module ModernTemplate
         controller_specs: false,# Controller specs são obsoletos (usamos Request Specs)
         request_specs: true
       g.fixture_replacement :factory_bot, dir: "spec/factories"
-    end
 
+
+      g.assets false          # Não gera arquivos de CSS/JS inúteis por model
+      g.helper false          # Não gera arquivos Helper vazios
+      g.jbuilder false        # Não gera views JSON (a menos que seja uma API explícita)
+      g.system_tests false    # Desliga testes de sistema do Minitest (vamos focar no RSpec)
+    end
   end
 end
