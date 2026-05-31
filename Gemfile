@@ -65,6 +65,7 @@ group :development, :test do
   gem "rubocop-rspec", require: false
 
   gem "factory_bot_rails"
+  gem "shoulda-matchers"
 end
 
 group :development do

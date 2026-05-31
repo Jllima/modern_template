@@ -32,8 +32,8 @@ module ModernTemplate
         routing_specs: false,   # Rotas são testadas nos Request Specs
         controller_specs: false,# Controller specs são obsoletos (usamos Request Specs)
         request_specs: true
+      g.fixture_replacement :factory_bot, dir: "spec/factories"
     end
 
-    g.fixture_replacement :factory_bot, dir: "spec/factories"
   end
 end
