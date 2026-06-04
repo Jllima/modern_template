@@ -19,6 +19,11 @@ app/
 │   ├── application_controller.rb
 │   ├── dashboard_controller.rb       # Controla a página inicial (Overview)
 │   └── posts_controller.rb           # CRUD reativo de Posts (Hotwire)
+├── use_cases/                        # Camada estrita de Regras de Negócio e Serviços
+│   ├── use_case_base.rb              # Módulo base que garante o Command Pattern e o Result Object
+│   └── posts/                        # Casos de uso agrupados por domínio (nascem automaticamente)
+│       ├── create.rb                 # Lógica isolada de criação (Model.new, validações, integrações)
+│       └── update.rb                 # Lógica isolada de atualização
 ├── javascript/
 │   ├── application.js                # Bootstrap JS + Import do Turbo
 │   └── controllers/                  # Controladores Stimulus (Interações client-side)
@@ -39,8 +44,22 @@ app/
 config/
 ├── database.yml                      # Configuração do banco PostgreSQL
 └── routes.rb                         # Mapeamento de rotas da aplicação
-lib/
-└── templates/                        # Templates customizados para scaffolding reativo
+lib/                                  # Coração da Fábrica de Software e Automações
+├── generators/
+│   ├── custom_scaffold_controller/   # Sobrescreve o scaffold padrão para acionar a geração de Use Cases
+│   │   └── custom_scaffold_controller_generator.rb
+│   └── use_case/                     # O nosso gerador inteligente que cria a lógica condicional (Create/Update)
+│       ├── use_case_generator.rb
+│       └── templates/use_case.rb.tt
+└── templates/                        # Templates base que o Rails usa ao rodar `rails generate`
+    ├── erb/scaffold/                 # Views Tailwind responsivas (Modal/Tela Cheia)
+    │   ├── _form.html.erb.tt
+    │   ├── index.html.erb.tt
+    │   ├── new.html.erb.tt
+    │   ├── edit.html.erb.tt
+    │   ├── show.html.erb.tt
+    │   └── partial.html.erb.tt
+    └── rails/scaffold_controller/    # Controller template pré-configurado com Turbo Stream e Use Cases
 ```
 
 *   **Runtime & Backend:** Ruby `3.3.5` e Rails `8.1.3`.
@@ -68,6 +87,11 @@ A maior evolução do projeto foi a customização dos geradores nativos do Rail
 * **Lixo Eliminado:** Desativámos a geração automática de CSS por modelo, Jbuilder (JSON) e Helpers vazios no `config/application.rb`.
 * **Views Híbridas Dinâmicas (`erb`):** Os arquivos `new.html.erb` e `edit.html.erb` utilizam o helper `turbo_frame_request?` para se auto-adaptarem. Se forem requisitados de forma tradicional, renderizam uma página inteira com botões de voltar. Se forem chamados por links Turbo, renderizam o componente flutuante de Modal com overlay escuro (`bg-slate-900/50`) e desfoque de fundo (`backdrop-blur-sm`).
 * **Controllers Reativos (`scaffold_controller`):** Reescrevemos a lógica do ciclo de vida HTTP do Rails. Ao salvar um recurso com sucesso via modal, o controller responde imediatamente com `format.turbo_stream`, injetando a nova linha (`turbo_stream.prepend` ou `turbo_stream.replace`) na tabela do Dashboard e destruindo o modal da memória (`turbo_stream.update("modal", "")`), mantendo o utilizador no mesmo contexto de navegação.
+
+### 6. Use Cases (Service Objects)
+Para evitar *Fat Models* e *Fat Controllers*, implementámos uma camada estrita de regras de negócio isolada baseada no **Command Pattern**.
+* **Módulo Base (`UseCaseBase`):** Todos os serviços implementam um único método público (`call`) e retornam um **Result Object** padronizado (`success?`, `data`, `error`), garantindo respostas previsíveis.
+* **Automação de Geradores:** Substituímos o gerador padrão de scaffold do Rails por um híbrido (`CustomScaffoldControllerGenerator`). Ao executar um scaffold, o Rails agora gera automaticamente os arquivos de Use Case (`Create` e `Update`) pré-preenchidos com a lógica de persistência e acoplados ao Controller Reativo.
 
 ---
 
