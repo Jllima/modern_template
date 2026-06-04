@@ -16,10 +16,11 @@ class <%= controller_class_name %>Controller < ApplicationController
   end
 
   def create
-    @<%= singular_table_name %> = <%= orm_class.build(class_name, "#{singular_table_name}_params") %>
+    result = <%= class_name.pluralize %>::Create.call(<%= singular_table_name %>_params)
+    @<%= singular_table_name %> = result.data
 
     respond_to do |format|
-      if @<%= orm_instance.save %>
+      if result.success?
         format.html do
           redirect_to <%= index_helper %>_url,
                       notice: "<%= human_name %> criado."
@@ -45,8 +46,11 @@ class <%= controller_class_name %>Controller < ApplicationController
   end
 
   def update
+    result = <%= class_name.pluralize %>::Update.call(@<%= singular_table_name %>, <%= singular_table_name %>_params)
+    @<%= singular_table_name %> = result.data
+
     respond_to do |format|
-      if @<%= orm_instance.update("#{singular_table_name}_params") %>
+      if result.success?
         format.html do
           redirect_to <%= index_helper %>_url,
                       notice: "<%= human_name %> atualizado."
