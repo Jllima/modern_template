@@ -7,7 +7,10 @@ class UseCaseGenerator < Rails::Generators::Base
 
   def create_use_case_file
     @module_name = model_name.pluralize.camelize
+    @model_name = model_name.singularize.camelize
+    @model_singular = model_name.singularize.underscore
     @class_name = action_name.camelize
+    @action_lower = action_name.downcase
 
     file_path = File.join(
       "app/use_cases",

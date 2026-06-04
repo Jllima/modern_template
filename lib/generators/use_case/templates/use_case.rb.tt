@@ -3,14 +3,45 @@
 module <%= @module_name %>
   class <%= @class_name %>
     include UseCaseBase
+<% if @action_lower == "create" -%>
+
+    def initialize(params)
+      @params = params
+    end
+
+    def call
+      <%= @model_singular %> = <%= @model_name %>.new(@params)
+
+      if <%= @model_singular %>.save
+        success(<%= @model_singular %>)
+      else
+        failure(<%= @model_singular %>, <%= @model_singular %>.errors)
+      end
+    end
+<% elsif @action_lower == "update" -%>
+
+    def initialize(<%= @model_singular %>, params)
+      @<%= @model_singular %> = <%= @model_singular %>
+      @params = params
+    end
+
+    def call
+      if @<%= @model_singular %>.update(@params)
+        success(@<%= @model_singular %>)
+      else
+        failure(@<%= @model_singular %>, @<%= @model_singular %>.errors)
+      end
+    end
+<% else -%>
 
     def initialize(*args)
       # Initialize dependencies and parameters
     end
 
     def call
-      # Implement use case business logic here
-      # success(data) or failure(data, error)
+      # TODO: Implementar lógica de negócio
+      success
     end
+<% end -%>
   end
 end

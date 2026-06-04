@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Customers
+module Posts
   class Create
     include UseCaseBase
 
@@ -9,12 +9,12 @@ module Customers
     end
 
     def call
-      customer = Customer.new(@params)
+      post = Post.new(@params)
 
-      if customer.save
-        success(customer)
+      if post.save
+        success(post)
       else
-        failure(customer, customer.errors.full_messages.to_sentence)
+        failure(post, post.errors)
       end
     end
   end

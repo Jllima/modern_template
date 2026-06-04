@@ -16,10 +16,11 @@ class PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(post_params)
+    result = Posts::Create.call(post_params)
+    @post = result.data
 
     respond_to do |format|
-      if @post.save
+      if result.success?
         format.html do
           redirect_to posts_url,
                       notice: "Post criado."
@@ -45,8 +46,11 @@ class PostsController < ApplicationController
   end
 
   def update
+    result = Posts::Update.call(@post, post_params)
+    @post = result.data
+
     respond_to do |format|
-      if @post.update(post_params)
+      if result.success?
         format.html do
           redirect_to posts_url,
                       notice: "Post atualizado."
