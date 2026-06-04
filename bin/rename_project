@@ -39,8 +39,9 @@ echo "Limpando caches e logs residuais..."
 rm -rf tmp/cache/*
 rm -rf log/*.log
 
-echo "✅ Estrutura renomeada com sucesso para $NEW_CAMEL!"
+cho "✅ Estrutura renomeada com sucesso para $NEW_CAMEL!"
 echo "⚠️  Próximos passos sugeridos:"
-echo "1. docker compose down -v && docker compose up -d"
-echo "2. bundle install && yarn install"
-echo "3. bin/rails db:setup"
+echo "1. criar o arquivo .env"
+echo "2. docker compose down -v && docker compose up -d"
+echo "3. bundle install && yarn install"
+echo "4. bin/rails db:setup"

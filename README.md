@@ -228,8 +228,10 @@ git clone git@github.com:nome_usuario/modern_template.git nome_do_novo_projeto
 cd nome_do_novo_projeto
 rm -rf .git && git init
 # Sintaxe: bin/rename_project NomeDoProjeto nome_do_projeto
+chmod +x bin/rename_project
 bin/rename_project SistemaClinicas sistema_clinicas
 
+criar o arquivo .env
 docker compose down -v && docker compose up -d
 bundle install && yarn install
 bin/rails db:setup
