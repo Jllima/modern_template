@@ -25,6 +25,7 @@ module ModernTemplate
     # config.eager_load_paths << Rails.root.join("extras")
     # # Configuração dos Geradores
     config.generators do |g|
+      g.scaffold_controller :custom_scaffold_controller
       g.test_framework :rspec,
         fixtures: false,
         view_specs: false,      # Não testamos views isoladas (usamos System Specs)
