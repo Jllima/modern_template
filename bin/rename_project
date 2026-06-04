@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Garante que o script pare se houver algum erro
+set -e
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+  echo "Uso incorreto! Forneça o nome em CamelCase e em snake_case."
+  echo "Exemplo: bin/rename_project MeuNovoApp meu_novo_app"
+  exit 1
+fi
+
+# Recebe os parâmetros do usuário
+NEW_CAMEL=$1
+NEW_SNAKE=$2
+
+# Transforma o snake_case em kebab-case automaticamente (troca _ por -)
+NEW_KEBAB=$(echo "$NEW_SNAKE" | tr '_' '-')
+
+# Nomes originais do template
+OLD_CAMEL="ModernTemplate"
+OLD_SNAKE="modern_template"
+OLD_KEBAB="modern-template"
+
+echo "Renomeando o projeto de $OLD_CAMEL para $NEW_CAMEL..."
+
+# Substitui o CamelCase
+find . -type f -not -path "*/\.git/*" -not -path "*/node_modules/*" -not -path "*/vendor/*" -not -path "*/tmp/*" -not -path "*/log/*" -exec sed -i -e "s/$OLD_CAMEL/$NEW_CAMEL/g" {} +
+
+# Substitui o snake_case
+find . -type f -not -path "*/\.git/*" -not -path "*/node_modules/*" -not -path "*/vendor/*" -not -path "*/tmp/*" -not -path "*/log/*" -exec sed -i -e "s/$OLD_SNAKE/$NEW_SNAKE/g" {} +
+
+# Substitui o kebab-case
+find . -type f -not -path "*/\.git/*" -not -path "*/node_modules/*" -not -path "*/vendor/*" -not -path "*/tmp/*" -not -path "*/log/*" -exec sed -i -e "s/$OLD_KEBAB/$NEW_KEBAB/g" {} +
+
+# Remove os arquivos de backup temporários criados pelo comando sed (específico para macOS/BSD)
+find . -type f -name "*-e" -exec rm -f {} +
+
+echo "Limpando caches e logs residuais..."
+rm -rf tmp/cache/*
+rm -rf log/*.log
+
+echo "✅ Estrutura renomeada com sucesso para $NEW_CAMEL!"
+echo "⚠️  Próximos passos sugeridos:"
+echo "1. docker compose down -v && docker compose up -d"
+echo "2. bundle install && yarn install"
+echo "3. bin/rails db:setup"

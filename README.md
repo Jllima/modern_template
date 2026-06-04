@@ -216,3 +216,20 @@ Os relatórios gerados pelas ferramentas de QA podem ser acessados localmente no
 *   **Cobertura de Testes (SimpleCov):** [docs/coverage/index.html](file:///home/dev/workspace/ruby_3_3_5/modern_template/docs/coverage/index.html)
 *   **Qualidade e Complexidade do Código (RubyCritic):** [docs/rubycritic/overview.html](file:///home/dev/workspace/ruby_3_3_5/modern_template/docs/rubycritic/overview.html)
 *   **Segurança (Brakeman):** [docs/brakeman/seguranca.html](file:///home/dev/workspace/ruby_3_3_5/modern_template/docs/brakeman/seguranca.html) (ou formato texto em [docs/brakeman/seguranca.md](file:///home/dev/workspace/ruby_3_3_5/modern_template/docs/brakeman/seguranca.md))
+
+## 🚀 Para Novos Projetos a Partir Deste (Setup de Boilerplate)
+
+Este repositório foi projetado para atuar como o ponto de partida (Boilerplate) oficial da fábrica de software. Para criar um novo sistema sem carregar o histórico do Git ou o nome genérico `ModernTemplate`, siga o fluxo abaixo rigorosamente:
+
+### 1. Clonar e Limpar o Histórico
+Faça o clone do repositório para o diretório com o nome do seu novo projeto e zere o histórico de versionamento para começar um projeto limpo:
+```bash
+git clone git@github.com:nome_usuario/modern_template.git nome_do_novo_projeto
+cd nome_do_novo_projeto
+rm -rf .git && git init
+# Sintaxe: bin/rename_project NomeDoProjeto nome_do_projeto
+bin/rename_project SistemaClinicas sistema_clinicas
+
+docker compose down -v && docker compose up -d
+bundle install && yarn install
+bin/rails db:setup
