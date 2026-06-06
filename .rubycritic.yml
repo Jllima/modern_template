@@ -1,0 +1,11 @@
+analysed_modules:
+  - app
+
+flay:
+  mass_threshold: 50
+
+reek:
+  enabled: true
+
+flog:
+  enabled: true

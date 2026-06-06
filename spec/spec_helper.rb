@@ -6,8 +6,15 @@ SimpleCov.start "rails" do
   add_filter "/bin/"
   add_filter "/db/"
   add_filter "/spec/"
+  add_filter '/config/'
+  add_filter '/lib/generators/'
 
   track_files "{app,lib}/**/*.rb"
+  # Se você quiser organizar o seu relatório HTML com abas separadas para os Use Cases,
+  # você pode adicionar os grupos assim:
+  add_group 'Controllers', 'app/controllers'
+  add_group 'Models', 'app/models'
+  add_group 'Use Cases', 'app/use_cases'
   # minimum_coverage 80
 end
 

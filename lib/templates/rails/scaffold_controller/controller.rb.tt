@@ -1,15 +1,18 @@
-class <%= controller_class_name %>Controller < ApplicationController
+# frozen_string_literal: true
+
+# Controller responsável pelo gerenciamento de fluxos web e turbo de <%= class_name.pluralize %>.
+class <%= class_name.pluralize %>Controller < ApplicationController
   before_action :set_<%= singular_table_name %>, only: %i[show edit update destroy]
 
   def index
-    @<%= plural_table_name %> = <%= orm_class.all(class_name) %>
+    @<%= plural_table_name %> = <%= class_name %>.all
   end
 
   def show
   end
 
   def new
-    @<%= singular_table_name %> = <%= orm_class.build(class_name) %>
+    @<%= singular_table_name %> = <%= class_name %>.new
   end
 
   def edit
@@ -19,90 +22,52 @@ class <%= controller_class_name %>Controller < ApplicationController
     result = <%= class_name.pluralize %>::Create.call(<%= singular_table_name %>_params)
     @<%= singular_table_name %> = result.data
 
-    respond_to do |format|
-      if result.success?
-        format.html do
-          redirect_to <%= index_helper %>_url,
-                      notice: "<%= human_name %> criado."
-        end
+    return render_form_errors(:new) unless result.success?
 
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.prepend(
-              "<%= plural_table_name %>",
-              partial: "<%= plural_table_name %>/<%= singular_table_name %>",
-              locals: {
-                <%= singular_table_name %>: @<%= singular_table_name %>
-              }
-            ),
-            turbo_stream.update("modal", "")
-          ]
-        end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream { render :new, status: :unprocessable_entity }
-      end
-    end
+    respond_with_success(
+      url: <%= index_helper %>_url,
+      notice: "<%= human_name %> criado com sucesso.",
+      action: :create,
+      record: @<%= singular_table_name %>
+    )
   end
 
   def update
     result = <%= class_name.pluralize %>::Update.call(@<%= singular_table_name %>, <%= singular_table_name %>_params)
     @<%= singular_table_name %> = result.data
 
-    respond_to do |format|
-      if result.success?
-        format.html do
-          redirect_to <%= index_helper %>_url,
-                      notice: "<%= human_name %> atualizado."
-        end
+    return render_form_errors(:edit) unless result.success?
 
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace(
-              @<%= singular_table_name %>,
-              partial: "<%= plural_table_name %>/<%= singular_table_name %>",
-              locals: {
-                <%= singular_table_name %>: @<%= singular_table_name %>
-              }
-            ),
-            turbo_stream.update("modal", "")
-          ]
-        end
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.turbo_stream { render :edit, status: :unprocessable_entity }
-      end
-    end
+    respond_with_success(
+      url: <%= index_helper %>_url,
+      notice: "<%= human_name %> atualizado com sucesso.",
+      action: :update,
+      record: @<%= singular_table_name %>
+    )
   end
 
   def destroy
-    @<%= orm_instance.destroy %>
+    @<%= singular_table_name %>.destroy!
 
-    respond_to do |format|
-      format.html do
-        redirect_to <%= index_helper %>_url,
-                    notice: "<%= human_name %> deletado."
-      end
-
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.remove(@<%= singular_table_name %>)
-      end
-    end
+    respond_with_success(
+      url: <%= index_helper %>_url,
+      notice: "<%= human_name %> deletado com sucesso.",
+      action: :destroy,
+      record: @<%= singular_table_name %>
+    )
   end
 
   private
 
   def set_<%= singular_table_name %>
-    @<%= singular_table_name %> = <%= orm_class.find(class_name, "params[:id]") %>
+    @<%= singular_table_name %> = <%= class_name %>.find(params[:id])
   end
 
-  def <%= "#{singular_table_name}_params" %>
-<%- if attributes_names.empty? -%>
+  def <%= singular_table_name %>_params
+    <%- if attributes_names.empty? -%>
     params.fetch(:<%= singular_table_name %>, {})
-<%- else -%>
-    params.require(:<%= singular_table_name %>).permit(
-      <%= attributes_names.map { |name| ":#{name}" }.join(",\n      ") %>
-    )
-<%- end -%>
+    <%- else -%>
+    params.require(:<%= singular_table_name %>).permit(<%= attributes_names.map { |name| ":#{name}" }.join(', ') %>)
+    <%- end -%>
   end
 end

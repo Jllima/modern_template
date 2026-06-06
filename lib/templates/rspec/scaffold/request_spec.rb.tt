@@ -1,0 +1,90 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe "/<%= name.underscore.pluralize %>", type: :request do
+  # TODO: Substitua os valores abaixo por atributos válidos e inválidos reais para o seu modelo
+  let(:valid_attributes) { { <%= attributes_names.map { |name| "#{name}: 'Valor de Teste'" }.join(', ') %> } }
+  let(:invalid_attributes) { { <%= attributes_names.first %>: nil } }
+  
+  let!(:<%= singular_table_name %>_record) { <%= class_name %>.create!(valid_attributes) }
+
+  describe "GET /index" do
+    it "renderiza a listagem com sucesso" do
+      get <%= index_helper %>_url
+      expect(response).to be_successful
+    end
+  end
+
+  describe "GET /new" do
+    it "renderiza o formulário com sucesso" do
+      get new_<%= singular_table_name %>_url
+      expect(response).to be_successful
+    end
+  end
+
+  describe "GET /edit" do
+    it "renderiza o formulário de edição com sucesso" do
+      get edit_<%= singular_table_name %>_url(<%= singular_table_name %>_record)
+      expect(response).to be_successful
+    end
+  end
+
+  describe "POST /create (Via Turbo Stream)" do
+    context "com parâmetros válidos" do
+      it "cria um novo <%= class_name %>, retorna 200 OK e injeta a linha na tabela" do
+        expect do
+          post <%= index_helper %>_url, params: { <%= singular_table_name %>: valid_attributes }, as: :turbo_stream
+        end.to change(<%= class_name %>, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('turbo-stream action="prepend" target="<%= plural_table_name %>"')
+        expect(response.body).to include('turbo-stream action="update" target="modal"')
+      end
+    end
+
+    context "com parâmetros inválidos" do
+      it "não cria o <%= class_name %> e retorna 422 para atualizar o modal com erros" do
+        expect do
+          post <%= index_helper %>_url, params: { <%= singular_table_name %>: invalid_attributes }, as: :turbo_stream
+        end.not_to change(<%= class_name %>, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe "PATCH /update (Via Turbo Stream)" do
+    context "com parâmetros válidos" do
+      let(:new_attributes) { { <%= attributes_names.first %>: 'Valor Atualizado' } }
+
+      it "atualiza o <%= class_name %>, retorna 200 OK e substitui a linha na tabela" do
+        patch <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: new_attributes }, as: :turbo_stream
+        <%= singular_table_name %>_record.reload
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("turbo-stream action=\"replace\" target=\"<%= singular_table_name %>_#{<%= singular_table_name %>_record.id}\"")
+        expect(response.body).to include('turbo-stream action="update" target="modal"')
+      end
+    end
+
+    context "com parâmetros inválidos" do
+      it "não atualiza o <%= class_name %> e retorna 422" do
+        patch <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: invalid_attributes }, as: :turbo_stream
+        
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe "DELETE /destroy (Via Turbo Stream)" do
+    it "deleta o <%= class_name %> e remove a linha da tabela via Turbo" do
+      expect do
+        delete <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), as: :turbo_stream
+      end.to change(<%= class_name %>, :count).by(-1)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("turbo-stream action=\"remove\" target=\"<%= singular_table_name %>_#{<%= singular_table_name %>_record.id}\"")
+    end
+  end
+end
