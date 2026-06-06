@@ -1,0 +1,13 @@
+---
+directories:
+  "app/controllers":
+    InstanceVariableAssumption:
+      enabled: false
+    IrresponsibleModule:
+      enabled: false
+    LongParameterList:
+      max_params: 5 # O padrão é 3.
+
+  "app/helpers":
+    UtilityFunction:
+      enabled: false

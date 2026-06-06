@@ -19,75 +19,39 @@ class PostsController < ApplicationController
     result = Posts::Create.call(post_params)
     @post = result.data
 
-    respond_to do |format|
-      if result.success?
-        format.html do
-          redirect_to posts_url,
-                      notice: "Post criado."
-        end
+    return render_form_errors(:new) unless result.success?
 
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.prepend(
-              "posts",
-              partial: "posts/post",
-              locals: {
-                post: @post
-              }
-            ),
-            turbo_stream.update("modal", "")
-          ]
-        end
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.turbo_stream { render :new, status: :unprocessable_entity }
-      end
-    end
+    respond_with_success(
+      url: posts_url,
+      notice: "Post criado com sucesso.",
+      action: :create,
+      record: @post
+    )
   end
 
   def update
     result = Posts::Update.call(@post, post_params)
     @post = result.data
 
-    respond_to do |format|
-      if result.success?
-        format.html do
-          redirect_to posts_url,
-                      notice: "Post atualizado."
-        end
+    return render_form_errors(:edit) unless result.success?
 
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.replace(
-              @post,
-              partial: "posts/post",
-              locals: {
-                post: @post
-              }
-            ),
-            turbo_stream.update("modal", "")
-          ]
-        end
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.turbo_stream { render :edit, status: :unprocessable_entity }
-      end
-    end
+    respond_with_success(
+      url: posts_url,
+      notice: "Post atualizado com sucesso.",
+      action: :update,
+      record: @post
+    )
   end
 
   def destroy
     @post.destroy!
 
-    respond_to do |format|
-      format.html do
-        redirect_to posts_url,
-                    notice: "Post deletado."
-      end
-
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.remove(@post)
-      end
-    end
+    respond_with_success(
+      url: posts_url,
+      notice: "Post deletado com sucesso.",
+      action: :destroy,
+      record: @post
+    )
   end
 
   private
