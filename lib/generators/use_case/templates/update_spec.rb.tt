@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe <%= @module_name %>::<%= @class_name %> do
+  describe ".call" do
+    let!(:<%= @model_singular %>) { create(:<%= @model_singular %>) }
+    
+    # TODO: Troque `:campo_obrigatorio` por um campo real para testar a edição
+    let(:valid_params) { attributes_for(:<%= @model_singular %>, campo_obrigatorio: "Valor Atualizado") }
+    let(:invalid_params) { attributes_for(:<%= @model_singular %>, campo_obrigatorio: nil) }
+
+    context "quando os parâmetros são válidos" do
+      it "atualiza o <%= @model_singular %> e retorna sucesso" do
+        result = described_class.call(<%= @model_singular %>, valid_params)
+
+        expect(result.success?).to be(true)
+        # expect(<%= @model_singular %>.reload.campo_obrigatorio).to eq("Valor Atualizado")
+      end
+    end
+
+    context "quando os parâmetros são inválidos" do
+      it "não atualiza no banco e retorna falha com erros" do
+        result = described_class.call(<%= @model_singular %>, invalid_params)
+
+        expect(result.success?).to be(false)
+        expect(result.data.errors).not_to be_empty
+      end
+    end
+  end
+end

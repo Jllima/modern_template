@@ -20,4 +20,16 @@ class UseCaseGenerator < Rails::Generators::Base
 
     template "use_case.rb.tt", file_path
   end
+
+  # NOVO: Método que gera os testes mantendo a segurança do código original
+  def create_use_case_spec_file
+    spec_file_path = File.join(
+      "spec/use_cases",
+      model_name.pluralize.underscore,
+      "#{action_name.underscore}_spec.rb"
+    )
+
+    # Invoca o template correto baseado na ação (ex: create_spec.rb.tt, update_spec.rb.tt)
+    template "#{action_name.underscore}_spec.rb.tt", spec_file_path
+  end
 end

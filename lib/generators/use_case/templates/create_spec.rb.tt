@@ -1,0 +1,39 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe <%= @module_name %>::<%= @class_name %> do
+  describe ".call" do
+    let(:valid_params) { attributes_for(:<%= @model_singular %>) }
+    
+    # TODO: Troque `:campo_obrigatorio` pelo nome real de um campo que não pode ficar em branco no model
+    let(:invalid_params) { attributes_for(:<%= @model_singular %>, campo_obrigatorio: nil) }
+
+    context "quando os parâmetros são válidos" do
+      it "cria o <%= @model_singular %> e retorna sucesso" do
+        expect {
+          described_class.call(valid_params)
+        }.to change(<%= @model_name %>, :count).by(1)
+
+        result = described_class.call(valid_params)
+        
+        expect(result.success?).to be(true)
+        expect(result.data).to be_a(<%= @model_name %>)
+      end
+    end
+
+    context "quando os parâmetros são inválidos" do
+      it "não cria e retorna falha com erros" do
+        expect {
+          described_class.call(invalid_params)
+        }.not_to change(<%= @model_name %>, :count)
+
+        result = described_class.call(invalid_params)
+        
+        expect(result.success?).to be(false)
+        expect(result.data).to be_a(<%= @model_name %>)
+        expect(result.data.errors).not_to be_empty
+      end
+    end
+  end
+end

@@ -59,7 +59,8 @@ RSpec.describe "/<%= name.underscore.pluralize %>", type: :request do
       let(:new_attributes) { { <%= attributes_names.first %>: 'Valor Atualizado' } }
 
       it "atualiza o <%= class_name %>, retorna 200 OK e substitui a linha na tabela" do
-        patch <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: new_attributes }, as: :turbo_stream
+        # CORREÇÃO AQUI:
+        patch <%= singular_table_name %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: new_attributes }, as: :turbo_stream
         <%= singular_table_name %>_record.reload
 
         expect(response).to have_http_status(:ok)
@@ -70,7 +71,8 @@ RSpec.describe "/<%= name.underscore.pluralize %>", type: :request do
 
     context "com parâmetros inválidos" do
       it "não atualiza o <%= class_name %> e retorna 422" do
-        patch <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: invalid_attributes }, as: :turbo_stream
+        # CORREÇÃO AQUI:
+        patch <%= singular_table_name %>_url(<%= singular_table_name %>_record), params: { <%= singular_table_name %>: invalid_attributes }, as: :turbo_stream
         
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -80,7 +82,8 @@ RSpec.describe "/<%= name.underscore.pluralize %>", type: :request do
   describe "DELETE /destroy (Via Turbo Stream)" do
     it "deleta o <%= class_name %> e remove a linha da tabela via Turbo" do
       expect do
-        delete <%= show_helper.gsub('@', '') %>_url(<%= singular_table_name %>_record), as: :turbo_stream
+        # CORREÇÃO AQUI:
+        delete <%= singular_table_name %>_url(<%= singular_table_name %>_record), as: :turbo_stream
       end.to change(<%= class_name %>, :count).by(-1)
 
       expect(response).to have_http_status(:ok)
